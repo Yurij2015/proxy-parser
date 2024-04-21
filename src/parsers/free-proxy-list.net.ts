@@ -10,7 +10,7 @@ export async function freeProxyListNet(url: string): Promise<void> {
     // Go to the URL
     await page.goto(url, {waitUntil: 'networkidle2'});
 
-    const proxyData = await page.evaluate((): Proxy[] => {
+    const proxyData: Proxy[] = await page.evaluate((url: string) => {
         let trSelector = '#list > div > div.table-responsive > div > table > tbody > tr';
         return Array.from(document.querySelectorAll(trSelector), row => {
             const tds = row.querySelectorAll('td');
@@ -21,24 +21,23 @@ export async function freeProxyListNet(url: string): Promise<void> {
                 country,
                 anonymity,
                 google,
-                instagram,
                 https,
-                lastChecked
+                lastChecked,
             ] = Array.from(tds).map(td => td.textContent!.trim());
 
             return {
-                proxy: proxy || '',
-                port: port || '',
-                code: code || '',
-                country: country || '',
-                anonymity: anonymity || '',
-                google: google || '',
-                instagram: instagram || '',
-                https: https || '',
-                lastChecked: lastChecked || ''
+                proxy: proxy,
+                port: port,
+                code: code,
+                country: country,
+                anonymity: anonymity,
+                google: google,
+                https: https,
+                lastChecked: lastChecked,
+                resource: url,
             };
         });
-    });
+    }, url);
 
     console.log(proxyData);
 
