@@ -2,7 +2,7 @@ import puppeteerExtra from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 
 import {Proxy} from '../models/proxy';
-import {Page} from 'puppeteer';
+import {randomDelay, simulateRandomDownScrolling, simulateRandomMouseMovements, wait} from '../helpers';
 
 export async function hidemyIo(url: string): Promise<void> {
     // TODO Bypass Cloudflare, maybe with chrome extension
@@ -92,48 +92,9 @@ export async function hidemyIo(url: string): Promise<void> {
         // await nextButton.click().then(() => console.log('Next button clicked'));
     }
 
-    // await simulateRandomDownScrolling(page);
-
-    function wait(ms: number | undefined) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    function randomDelay() {
-        return Math.floor(Math.random() * 4000) + 1000;
-    }
-
-    function randomTypingDelay() {
-        return Math.floor(Math.random() * 51) + 50;
-    }
-
-
-    async function simulateRandomMouseMovements(page: Page) {
-        const maxMovements = 10;
-        for (let i = 0; i < maxMovements; i++) {
-            // Generate random coordinates for mouse movement
-            const x = Math.floor(Math.random() * 1000); // Adjust max x coordinate as needed
-            const y = Math.floor(Math.random() * 1000); // Adjust max y coordinate as needed
-
-            await page.mouse.move(x, y);
-
-            await wait(randomDelay());
-        }
-    }
-
-    async function simulateRandomDownScrolling(page: Page) {
-        const maxScrolls = 5;
-        for (let i = 0; i < maxScrolls; i++) {
-            // Scroll down by a random amount
-            await page.evaluate(() => {
-                const distance = Math.floor(Math.random() * 500) + 100; // Adjust max scroll distance as needed
-                window.scrollBy(0, distance);
-            });
-            await wait(randomDelay()); // Adjust max delay as needed
-        }
-    }
-
     console.log(proxyData);
     console.log(lastPageNumber);
 
     await browser.close();
+    console.log('browser closed');
 }

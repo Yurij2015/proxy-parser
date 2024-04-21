@@ -3,6 +3,7 @@ export interface Proxy {
     port: string;
     code?: string;
     country?: string;
+    city?: string;
     anonymity?: string;
     google?: string;
     instagram?: string;
