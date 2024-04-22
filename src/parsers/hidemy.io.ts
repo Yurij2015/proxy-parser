@@ -1,8 +1,9 @@
 import puppeteerExtra from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 
-import {Proxy} from '../models/proxy';
-import {randomDelay, simulateRandomDownScrolling, simulateRandomMouseMovements, wait} from '../helpers';
+import {ProxyInterface} from '../models/proxy';
+import {randomDelay, saveProxyData, simulateRandomDownScrolling, simulateRandomMouseMovements, wait} from '../helpers';
+import chalk from "chalk";
 
 export async function hidemyIo(url: string): Promise<void> {
     // TODO Bypass Cloudflare, maybe with chrome extension
@@ -24,9 +25,7 @@ export async function hidemyIo(url: string): Promise<void> {
     const page = await browser.newPage();
     await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36');
     await page.setViewport(viewPort);
-    // await page.setJavaScriptEnabled(true);
 
-    // Go to the URL
     await page.goto(url, {waitUntil: 'networkidle2'});
 
     // await wait(randomDelay());
@@ -36,7 +35,7 @@ export async function hidemyIo(url: string): Promise<void> {
         el => el.textContent
     );
 
-    const proxyData: Proxy[] = await page.evaluate(async (url: string) => {
+    const proxyData: ProxyInterface[] = await page.evaluate(async (url: string) => {
         let trSelector = '.table_block > table > tbody > tr';
         return Array.from(document.querySelectorAll(trSelector), row => {
             const tds = row.querySelectorAll('td');
@@ -50,7 +49,7 @@ export async function hidemyIo(url: string): Promise<void> {
                 lastUpdate,
             ] = Array.from(tds).map(td => td.textContent!.trim());
 
-            return {
+            let proxyRow = {
                 proxy: ipAddress,
                 port: port,
                 code: country,
@@ -61,8 +60,15 @@ export async function hidemyIo(url: string): Promise<void> {
                 resource: url,
                 speed: speed
             };
+            return proxyRow;
         });
     }, url);
+
+    try {
+        await saveProxyData(proxyData);
+    } catch (error) {
+        console.error('Error saving data:', error);
+    }
 
     // await simulateRandomMouseMovements(page);
     //
@@ -92,9 +98,6 @@ export async function hidemyIo(url: string): Promise<void> {
         // await nextButton.click().then(() => console.log('Next button clicked'));
     }
 
-    console.log(proxyData);
-    console.log(lastPageNumber);
-
     await browser.close();
-    console.log('browser closed');
+    console.log(url + chalk.green.bold(' browser closed'));
 }
