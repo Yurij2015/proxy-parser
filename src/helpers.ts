@@ -1,4 +1,6 @@
 import {Page} from "puppeteer";
+import {ProxyInterface, ProxyModel} from "./models/proxy";
+import sequelize from "./config/sequelize";
 
 export function wait(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -32,4 +34,33 @@ export async function simulateRandomDownScrolling(page: Page) {
 
 export function randomTypingDelay() {
     return Math.floor(Math.random() * 51) + 50;
+}
+
+export async function saveProxyData(proxyData: ProxyInterface[]) {
+    const ProxyDataModel = ProxyModel(sequelize);
+    await ProxyDataModel.sync();
+    for (const proxyRow of proxyData) {
+        const existingProxy = await ProxyDataModel.findOne({
+            where: {
+                proxy: proxyRow.proxy,
+                port: proxyRow.port
+            }
+        });
+        if (existingProxy) {
+            continue;
+        }
+        const data = {
+            proxy: proxyRow.proxy,
+            port: proxyRow.port,
+            code: proxyRow.code,
+            country: proxyRow.country,
+            city: proxyRow.city,
+            anonymity: proxyRow.anonymity,
+            https: proxyRow.https,
+            lastChecked: proxyRow.lastChecked,
+            resource: proxyRow.resource,
+            speed: proxyRow.speed
+        };
+        await ProxyDataModel.create(data);
+    }
 }

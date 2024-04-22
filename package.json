@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/chalk": "^2.2.0",
     "@types/node": "^20.12.7",
     "@types/puppeteer": "^7.0.4",
     "nodemon": "^3.1.0",
@@ -20,8 +21,10 @@
   },
   "dependencies": {
     "dotenv": "^16.4.5",
+    "mysql2": "^3.9.7",
     "puppeteer": "^22.6.5",
     "puppeteer-extra": "^3.3.6",
-    "puppeteer-extra-plugin-stealth": "^2.11.2"
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "sequelize": "^6.37.3"
   }
 }

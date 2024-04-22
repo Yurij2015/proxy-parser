@@ -1,9 +1,10 @@
 import puppeteerExtra from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 
-import {Proxy} from '../models/proxy';
+import {ProxyInterface} from '../models/proxy';
 import {Page} from 'puppeteer';
-import {randomDelay, simulateRandomDownScrolling, simulateRandomMouseMovements, wait} from '../helpers';
+import {randomDelay, saveProxyData, simulateRandomDownScrolling, simulateRandomMouseMovements, wait} from '../helpers';
+import chalk from "chalk";
 
 export async function freeProxyWorld(url: string): Promise<void> {
     puppeteerExtra.use(StealthPlugin());
@@ -17,7 +18,7 @@ export async function freeProxyWorld(url: string): Promise<void> {
         isMobile: false
     };
     const browser = await puppeteerExtra.launch({
-        headless: false,
+        // headless: false,
         userDataDir: 'userDataDir/' + url.replace(/^https?:\/\//, ''),
     });
     const page = await browser.newPage();
@@ -32,20 +33,16 @@ export async function freeProxyWorld(url: string): Promise<void> {
     );
 
     for (let i = 1; i <= parseInt(lastPageNumber ?? '1'); i++) {
-        let pageParam =`/?page=${i}`;
-        console.log(`Page ${i} of ${lastPageNumber}`);
-        console.log(url + pageParam);
+        let pageParam = `/?page=${i}`;
         await page.goto(url + pageParam, {waitUntil: 'networkidle2'});
         await openPage(page, url + pageParam);
-        console.log(`Page ${i} of ${lastPageNumber}`);
     }
 
     async function openPage(page: Page, url: string) {
-
-        const proxyData: Proxy[] = await page.evaluate(async (url: string) => {
+        const proxyData: ProxyInterface[] = await page.evaluate(async (url: string) => {
             let trSelector = '.proxy-table > table > tbody > tr';
-            const rowData = {} as Proxy;
-            return Array.from(document.querySelectorAll(trSelector), row => {
+            const rowsData: ProxyInterface[] = [];
+            Array.from(document.querySelectorAll(trSelector), row => {
                 const tds = row.querySelectorAll('td');
                 const [
                     ipAddress,
@@ -58,23 +55,31 @@ export async function freeProxyWorld(url: string): Promise<void> {
                     lastCheck,
                 ] = Array.from(tds).map(td => td.textContent!.trim());
 
-                Object.assign(rowData, {
-                    proxy: ipAddress,
-                    port: port,
-                    code: country,
-                    country: country,
-                    city: city,
-                    anonymity: anonymity,
-                    https: type,
-                    lastChecked: lastCheck,
-                    resource: url,
-                    speed: speed
-                })
-                return rowData;
+                if (ipAddress && port) {
+                    let proxyRow = {
+                        proxy: ipAddress,
+                        port: port,
+                        code: country,
+                        country: country,
+                        city: city,
+                        anonymity: anonymity,
+                        https: type,
+                        lastChecked: lastCheck,
+                        resource: url,
+                        speed: speed
+                    };
+                    rowsData.push(proxyRow)
+                }
+
             });
+            return rowsData;
         }, url);
 
-        console.log(proxyData);
+        try {
+            await saveProxyData(proxyData);
+        } catch (error) {
+            console.error('Error saving data:', error);
+        }
 
         await simulateRandomMouseMovements(page);
         await wait(randomDelay());
@@ -96,8 +101,6 @@ export async function freeProxyWorld(url: string): Promise<void> {
         }
         await wait(randomDelay());
     }
-
-    console.log(lastPageNumber);
-
-    // await browser.close();
+    await browser.close();
+    console.log(url + chalk.green.bold(' browser closed'));
 }
