@@ -16,6 +16,12 @@ export interface ProxyInterface {
     resource: string;
     internalCheckDate?: string;
     speed?: string;
+    mobile?: boolean;
+    hosting?: boolean;
+    status?: string;
+    ssl?: boolean;
+    protocol?: string;
+
 }
 
 // Define the Sequelize model for the Proxy interface
@@ -36,6 +42,11 @@ export const ProxyModel = (sequelize: Sequelize) => {
         resource: DataTypes.STRING,
         internalCheckDate: DataTypes.STRING,
         speed: DataTypes.STRING,
+        mobile: DataTypes.BOOLEAN,
+        hosting: DataTypes.BOOLEAN,
+        status: DataTypes.STRING,
+        ssl: DataTypes.BOOLEAN,
+        protocol: DataTypes.STRING,
     },{
         tableName: 'parsed_proxies',
         indexes: [

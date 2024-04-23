@@ -59,7 +59,12 @@ export async function saveProxyData(proxyData: ProxyInterface[]) {
             https: proxyRow.https,
             lastChecked: proxyRow.lastChecked,
             resource: proxyRow.resource,
-            speed: proxyRow.speed
+            speed: proxyRow.speed,
+            mobile: proxyRow.mobile,
+            hosting: proxyRow.hosting,
+            status: proxyRow.status,
+            ssl: proxyRow.ssl,
+            protocol: proxyRow.protocol
         };
         await ProxyDataModel.create(data);
     }
