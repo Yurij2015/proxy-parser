@@ -45,7 +45,4 @@ export async function proxyScrapeCom(url: string): Promise<void> {
     } catch (error) {
         console.error('Error saving data:', error);
     }
-
-    console.log(proxyData);
-
 }
