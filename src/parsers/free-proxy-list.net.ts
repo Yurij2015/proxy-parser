@@ -5,7 +5,8 @@ import chalk from "chalk";
 export async function freeProxyListNet(url: string): Promise<void> {
     const browser = await puppeteer.launch({
         // headless: false,
-        userDataDir: 'userDataDir/' + url.replace(/^https?:\/\//, '')
+        userDataDir: 'userDataDir/' + url.replace(/^https?:\/\//, ''),
+        protocolTimeout: 60000
     });
     const viewPort = {
         width: 1280 + Math.floor(Math.random() * 100),

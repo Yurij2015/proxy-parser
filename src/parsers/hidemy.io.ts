@@ -21,6 +21,7 @@ export async function hidemyIo(url: string): Promise<void> {
         // executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
         // headless: false,
         userDataDir: 'userDataDir/' + url.replace(/^https?:\/\//, ''),
+        protocolTimeout: 60000
     });
     const page = await browser.newPage();
     await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36');
