@@ -20,6 +20,7 @@ export async function freeProxyWorld(url: string): Promise<void> {
     const browser = await puppeteerExtra.launch({
         // headless: false,
         userDataDir: 'userDataDir/' + url.replace(/^https?:\/\//, ''),
+        protocolTimeout: 60000
     });
     const page = await browser.newPage();
     await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36');
