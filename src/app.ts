@@ -4,6 +4,7 @@ import {freeProxyWorld} from './parsers/freeproxy.world';
 import chalk from 'chalk';
 import {proxyScrapeCom} from "./parsers/proxyscrape.com";
 import {proxylistGeonodeCom} from "./parsers/proxylist.geonode.com";
+import {findAllProxies} from "./checker/checker-proxy";
 
 async function main() {
     try {
@@ -13,6 +14,8 @@ async function main() {
         freeProxyWorld('https://www.freeproxy.world').then(r => console.log('Scraping freeproxy.world complete!'));
         proxyScrapeCom(proxyScrapeComUrl).then(r => console.log(chalk.red.bold('Scraping proxyscrape.com complete!')));
         proxylistGeonodeCom('https://proxylist.geonode.com').then(r => console.log(chalk.red.bold('Scraping proxylist.geonode.com complete!')));
+        // await findAllProxies().then(r => console.log(chalk.red.bold('Finding proxies complete!')));
+
     } catch (error) {
         console.error('An error occurred:', error);
     }

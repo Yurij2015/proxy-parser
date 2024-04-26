@@ -13,7 +13,7 @@ export interface ProxyInterface {
     facebook?: string;
     https?: string;
     lastChecked?: string;
-    resource: string;
+    resource?: string;
     internalCheckDate?: string;
     speed?: string;
     mobile?: boolean;

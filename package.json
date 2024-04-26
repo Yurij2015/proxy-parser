@@ -23,6 +23,7 @@
     "axios": "^1.6.8",
     "dotenv": "^16.4.5",
     "mysql2": "^3.9.7",
+    "nodejs-proxy-checkerv2": "^1.2.2",
     "puppeteer": "^22.6.5",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
